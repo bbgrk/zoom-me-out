@@ -1,4 +1,4 @@
-# Auto Zoom Out
+# Zoom Me Out
 
 Zoom Me Out is a small Raidcore Nexus addon for Guild Wars 2 that presses your Camera Zoom Out key for you at a steady interval, with afk check. That is all it does.
 
