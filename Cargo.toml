@@ -1,0 +1,22 @@
+[package]
+name = "zoom-me-out"
+version = "0.1.0"
+edition = "2024"
+authors = ["GRK"]
+description = "Presses Camera Zoom Out at a fixed interval"
+repository = "https://github.com/bbgrk/zoom-me-out"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+nexus = { git = "https://github.com/zerthox/nexus-rs", features = ["log", "serde", "strum"] }
+log = "0.4"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+strum = "0.28"
+
+[profile.release]
+opt-level = "s"
+lto = true
+strip = true
