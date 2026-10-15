@@ -49,7 +49,7 @@ You need Windows and a recent Rust toolchain (1.85 or newer, edition 2024).
 
 ```
 git clone <this repository>
-cd auto-zoom-out
+cd zoom-me-out
 cargo build --release
 ```
 
