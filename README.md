@@ -38,7 +38,8 @@ Settings are written to `config.json` inside the addon's own folder under `addon
 ```json
 {
   "enabled": true,
-  "interval_ms": 100
+  "interval_ms": 100,
+  "afk_timeout_ms": 2500
 }
 ```
 
