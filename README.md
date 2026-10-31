@@ -29,6 +29,7 @@ Open the Nexus addon menu and go to the options for **Zoom Me Out**:
 | --- | --- |
 | Enabled | Turns the automatic pressing on or off. Off by default. |
 | Interval (ms) | Time between presses, from 50 to 1000. Default is 100. |
+| AFK timeout (ms) | AFK Timeout check. Default is 2500 |
 
 ## Configuration file
 
