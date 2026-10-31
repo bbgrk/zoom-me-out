@@ -1,6 +1,6 @@
 [package]
 name = "zoom-me-out"
-version = "0.1.0"
+version = "0.1.2"
 edition = "2024"
 authors = ["GRK"]
 description = "Presses Camera Zoom Out at a fixed interval"

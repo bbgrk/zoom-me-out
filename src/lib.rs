@@ -17,9 +17,11 @@ use std::{
 const ADDON_DIR_NAME: &str = "zoom-me-out";
 const MIN_INTERVAL_MS: i32 = 50;
 const MAX_INTERVAL_MS: i32 = 1000;
+const MIN_AFK_TIMEOUT_MS: i32 = 1000;
+const MAX_AFK_TIMEOUT_MS: i32 = 30000;
+const DEFAULT_AFK_TIMEOUT_MS: i32 = 2500;
 const PRESS_DURATION_MS: i32 = 10;
 const CAMERA_ZOOM_OUT_BUTTON: GameBind = GameBind::CameraZoomOut;
-const AFK_TIMEOUT: Duration = Duration::from_secs(30);
 
 nexus::export! {
     name: "Zoom Me Out",
@@ -34,6 +36,7 @@ nexus::export! {
 struct Settings {
     enabled: bool,
     interval_ms: i32,
+    afk_timeout_ms: i32,
 }
 
 impl Default for Settings {
@@ -41,7 +44,17 @@ impl Default for Settings {
         Self {
             enabled: false,
             interval_ms: 100,
+            afk_timeout_ms: DEFAULT_AFK_TIMEOUT_MS,
         }
+    }
+}
+
+impl Settings {
+    fn clamp_values(&mut self) {
+        self.interval_ms = self.interval_ms.clamp(MIN_INTERVAL_MS, MAX_INTERVAL_MS);
+        self.afk_timeout_ms = self
+            .afk_timeout_ms
+            .clamp(MIN_AFK_TIMEOUT_MS, MAX_AFK_TIMEOUT_MS);
     }
 }
 
@@ -63,7 +76,7 @@ fn load_settings() -> Settings {
         .ok()
         .and_then(|text| serde_json::from_str(&text).ok())
         .unwrap_or_default();
-    settings.interval_ms = settings.interval_ms.clamp(MIN_INTERVAL_MS, MAX_INTERVAL_MS);
+    settings.clamp_values();
     settings
 }
 
@@ -97,9 +110,18 @@ fn options_ui(ui: &Ui) {
         changed = true;
     }
     ui.text_disabled(format!("{MIN_INTERVAL_MS} - {MAX_INTERVAL_MS} ms"));
+
+    ui.input_int("AFK timeout (ms)", &mut settings.afk_timeout_ms)
+        .step(100)
+        .build();
+    if ui.is_item_deactivated_after_edit() {
+        settings.afk_timeout_ms = settings
+            .afk_timeout_ms
+            .clamp(MIN_AFK_TIMEOUT_MS, MAX_AFK_TIMEOUT_MS);
+        changed = true;
+    }
     ui.text_disabled(format!(
-        "Pauses after {} s without movement.",
-        AFK_TIMEOUT.as_secs()
+        "{MIN_AFK_TIMEOUT_MS} - {MAX_AFK_TIMEOUT_MS} ms. Pauses after this long without movement."
     ));
 
     if changed {
@@ -124,7 +146,12 @@ fn tick(_ui: &Ui) {
         *moved = Some(now);
     }
     let last_moved = *moved.get_or_insert(now);
-    if now.duration_since(last_moved) >= AFK_TIMEOUT {
+    let afk_timeout = Duration::from_millis(
+        settings
+            .afk_timeout_ms
+            .clamp(MIN_AFK_TIMEOUT_MS, MAX_AFK_TIMEOUT_MS) as u64,
+    );
+    if now.duration_since(last_moved) >= afk_timeout {
         return; // AFK: do nothing until the player moves again
     }
 
