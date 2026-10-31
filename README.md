@@ -55,7 +55,7 @@ cd zoom-me-out
 cargo build --release
 ```
 
-The addon is built to `target\release\zoom-me-out.dll`. Cargo turns the hyphens in the project name into underscores for the file name.
+The addon is built to `target\release\zoom_me_out.dll`. Cargo turns the hyphens in the project name into underscores for the file name.
 
 ## Disclaimer
 
